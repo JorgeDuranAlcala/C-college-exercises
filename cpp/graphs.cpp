@@ -5,6 +5,7 @@ typedef map<string, vector<string>> adjlist;
 typedef vector<pair<string, string>> Edges;
 
 adjlist createAdjacencyList(Edges edges, vector<string> nodes);
+int countConnectedComponents(vector<string> nodes, adjlist adjl);
 void printAdjacencyList(adjlist adjencyList);
 void depthFirstSearch(adjlist adjl, string start, string end);
 void breathFirstSearch(adjlist adjl, string start, string end);
@@ -20,7 +21,14 @@ int main()
     edges.push_back({"d", "e"});
     edges.push_back({"b", "e"}); */
 
-    nodes = {"0", "1", "5", "8", "2", "3", "4"};
+    nodes.push_back("0");
+    nodes.push_back("1");
+    nodes.push_back("5");
+    nodes.push_back("8");
+    nodes.push_back("2");
+    nodes.push_back("3");
+    nodes.push_back("4");
+
     edges.push_back({"0", "8"});
     edges.push_back({"0", "1"});
     edges.push_back({"0", "5"});
@@ -37,6 +45,8 @@ int main()
          << "\n";
     breathFirstSearch(adjencyList, "a", "d"); */
     printAdjacencyList(adjencyList);
+    cout << "How many connected components are in this adjlist ? "
+         << "\ncount: " << countConnectedComponents(nodes, adjencyList) << "\n";
 
     return 0;
 }
@@ -134,4 +144,33 @@ adjlist createAdjacencyList(Edges edges, vector<string> nodes)
     }
 
     return adjencyList;
+}
+
+bool CCCHelper(adjlist adjl, string start, set<string> visited)
+{
+    cout << start << " visited: " << visited.count(start) << "\n";
+    if (visited.count(start) == 1)
+        return false;
+    visited.insert(start);
+    for (auto neighbor : adjl[start])
+    {
+        CCCHelper(adjl, neighbor, visited);
+    }
+    return true;
+}
+
+int countConnectedComponents(vector<string> nodes, adjlist adjl)
+{
+    int count = 0;
+    set<string> v;
+
+    for (auto i : nodes)
+    {
+        if (CCCHelper(adjl, i, v))
+        {
+            count++;
+        }
+    }
+
+    return count;
 }
